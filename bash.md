@@ -5,7 +5,8 @@
 #### shopt
 - `-s` set option
 - `-u` unset option
-
+- Show option status
+    - `shopt [option]`
 - options
     - autocd
         - change directory without `cd` command
@@ -40,6 +41,7 @@
 
 - Compatible solution for Sourcing and Executing
     ```bash
+    # Detect if a script is being sourced or executed
     shopt -s expand_aliases # make alias command work in bash script
     [[ $0 != $BASH_SOURCE ]] && alias exit_cmd='return' || alias exit_cmd='exit'
 
