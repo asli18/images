@@ -32,7 +32,7 @@
         - `-3 >> 1 = -2`, but `-3 / 2 = -1`
 - 善用 const & static
     - static function
-        - compiler會視情況而決定是否編譯成inline 
+        - compiler會視情況而決定是否編譯成inline
     - inline function
         - 並不會一定編譯成inline, 只是建議compiler
 - 使用 unsigned 類型作為迴圈記數值，迴圈繼續的條件用 `i != 0` 取代 `i > 0`
@@ -40,6 +40,18 @@
 - 迴圈內如果有 array  data 要累加，換成 pointer 效率較高
     - `sum += data[i];`, two instructions
     - `sum += *(data++);`, one instruction
+- 少用指標別名(pointer alias)
+    - 編譯器必須考慮到兩個指標別名指到同一個位置的情況，因此無法優化
+    - 可以用區域變數把常用到的值先存下來使用，也不用怕執行中間指到的值被不預期更改
+- 避免使用區域變數的位置，存取效率比較低，(因為要對齊8B邊界 ?)
+    - In the GNU system, the address is always a multiple of eight on most systems, and a multiple of 16 on 64-bit systems.
+    - https://hackmd.io/@sysprog/c-memory?type=view
+- 位元區域(bit field)
+    - 避免使用位元區域對提高效率是有好處的
+    - 用 #define & enum 來定義 bit mask
+    - 用邏輯運算元 AND OR ... 和 bit mask 進行測試反向設置的操作，效率較高
+    - 位元區域是結構體的元素，通常使用結構體指標進行存取
+    - 所以同樣也存在指標別名的問題，使得編譯器需要經常重新下載位元區域
 - [**Optimizations in loop**](https://www.geeksforgeeks.org/basic-code-optimizations-in-c/)
     - Unroll small loops
     - Use Register variables as counters of inner loops
