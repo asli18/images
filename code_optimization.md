@@ -1,4 +1,4 @@
-### Code Optimizations
+### Code Optimization
 
 - Data alignment
     - struct and array
