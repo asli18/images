@@ -1,4 +1,14 @@
 ## FreeRTOS
+
+### FreeRTOS kernel directory structure
+- The core FreeRTOS kernel source files and demo projects are contained in two sub directories as shown below:
+    - Demo
+        - Contains the demo application projects.
+    - Source
+        - Contains the real time kernel source code.
+- The core RTOS code is contained in three files, which are called called `tasks.c`, `queue.c` and `list.c`. These three files are in the `FreeRTOS/Source` directory. The same directory contains two optional files called `timers.c` and `croutine.c` which implement software timer and co-routine functionality respectively.
+----
+### Notes
 - 需要一個 cpu timer irq, tick
 - 有四種 heap 管理方式可以選
 - CPU tick : OS tick 的比例, configTICK_RATE_HZ
