@@ -1,0 +1,19 @@
+
+
+
+
+
+
+
+env
+
+toolchain 加入PATH
+
+ba-elf-xxx
+
+
+檔案要沒壓縮過，才能辨識
+../toolchain/mips-openwrt-linux-uclibc/bin/objdump -S u-boot >u-boot.dis
+= ba-elf-objdump -S xxx
+../toolchain/mips-openwrt-linux-uclibc/bin/nm u-boot > system.map
+= ba-elf-nm xxx

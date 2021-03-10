@@ -1,0 +1,19 @@
+
+
+
+
+http://tpesw1/tpesw/browser/ecos/trunk/lynx_toolchain
+
+tar xvf ba-elf_4.7.3.tgz
+
+cd ba-elf_4.7.3/bin
+
+export PATH=$(pwd):$PATH
+
+export 可確認
+
+
+env
+toolchain 加入PATH
+ba-elf-xxx
+

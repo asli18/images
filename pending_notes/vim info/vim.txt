@@ -1,0 +1,126 @@
+trace code
+NETRW 瀏覽器----------------------------------------------------------------
+:Explore        files manager
+:E
+:help Explore
+- : 上一層目錄
+v : 切割出垂直視窗並顯示
+----------------------------------------------------------------------------
+cscope 
+:e [檔名]    在原視窗開啟檔案
+:vnew        新增垂直視窗
+:vnew [檔名] 在新增垂直視窗開啟檔案
+:vs          複製原視窗，新增垂直視窗
+:only        僅保留目前視窗
+
+:ls  會列出目前 buffer 中的所有檔案
+:b檔名或編號  移至該檔
+
+:cs find s 關鍵字   搜尋
+:cw	列出
+
+"清除vim 暫存檔  swap  .swp .swo, .swn "
+find . -name '.*.sw*'|xargs rm 
+find . -name '*rej'|xargs rm
+"清除文字暫存檔  xxx~"
+find . -name "*~" -exec rm {} \;
+
+刪除行尾的空白
+:%s/\s\+$//g
+
+字裡行間的多餘空白（含 Tab），縮成一個空白
+（以□代表一個英文空白）
+:%s/\s\+/□/g
+
+"http://blog.johnsonlu.org/vim-tips/"
+
+$ 移到行尾
+H 移到視窗最上
+M 移到視窗中間
+L 移到視窗最下
+ctrl + o : 回到上一個地方
+ctrl + ] : 遇到function 按 " ctrl + ] " ，可找到宣告function處
+ctrl + t : 當你跳走，想跳回剛剛原本的地方，則按" ctrl + t "就會回到上一個地方去
+Shift + % : 括號的另一端
+
+行數 G : 移到行數
+
+? : 向上搜尋字串
+/ : 向下搜尋字串
+n : next
+N : previous
+
+u : undo 回到上一步
+ctrl + r : redo 回復undo
+yy: 複製游標行
+
+dd 刪除一整行(delete line)。
+dG 刪至檔尾
+D  刪至行尾
+yG 複製至檔尾
+
+i : 游標前開始編輯模式
+a : 游標後開始編輯模式
+
+v : 開始字串標記 visual
+V : 開始行標記 visual line
+ctrl + v : visual block
+
+d : 刪除標記內容
+y : 複製標記內容
+ctrl+[ = ESC
+
+p : 在下一行貼上複製或刪除的內容（指令模式）
+[Ctrl]-R->0 : 在下一行貼上複製或刪除的內容（適用指令&編輯模式）
+
+":%s/^M//gc"  ^M = ctrl+v+m  用/空/取代^M
+取代為  (y/n/a/q/^E/^Y)? a 全部
+
+vim ， ctrl+v 全選後 + J  會把每排接起來，就是把換行拿掉
+
+
+.vim/colors/256-jungle.vim
+改配色
+http://monster-log.blogspot.tw/2010/12/vim-color-scheme-test.html
+screen 256色
+http://robotsrule.us/vim/
+http://portable.easylife.tw/1573
+
+
+~/.vimrc
+http://www.study-area.org/tips/vim/Vim-9.html
+
+
+sudo apt-get install bvi
+bvi 用hex 顯示binary檔
+"bvi"
+:set memmove 
+i	insert mode
+x	delete
+g	go to hex address
+
+
+===========================================================================
+大量改寫名稱 http://drupals.cn/node/2924
+
+find . -name "*boot.???"|sed 's/\(.*\)\(img\)\(.*\)/mv \1\2\3 \1bb\3/'
+
+asli@tpesw1:~/work/proj/lynx-2.0/images$ 
+find . -name "*boot.???"|sed 's/\(.*\)\(img\)/mv \1 \1bb/'
+mv ./iot_boot. ./iot_boot.bb
+mv ./mico_boot. ./mico_boot.bb
+還不會真的改寫
+
+這樣才會真的執行
+find . -name "*boot.???"|sed 's/\(.*\)\(img\)/mv \1\2 \1bbb/'|sh 
+find . -name "*boot.???"|sed 's/\(.*\)\(bbb\)/mv \1\2 \1img/'|sh 
+
+===========================================================================
+:E 有重複開頭的命令
+Ambiguous use of user defined command
+Map :E to :Explore in command mode?
+http://stackoverflow.com/questions/14367440/map-e-to-explore-in-command-mode
+:cabbrev E Explore  指定 E 命令就是用 Explore
+
+
+

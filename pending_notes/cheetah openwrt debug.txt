@@ -1,0 +1,110 @@
+
+do_cpu invoked from kernel context![#1]:  //意思是執行到了excption
+Cpu 0   
+$ 0   : 00000000 80450000 00000017 10000000
+$ 4   : 00000000 81c19220 1000fc00 ffff00fe
+$ 8   : 81fd3fe0 0000fc00 00000000 81c2c000
+$12   : 00000025 00000000 0000000d 00470000
+$16   : 00000004 81c8b300 2ab7f308 00000004
+$20   : 00000004 81fd3f10 2ab7f308 0000002d
+$24   : 004704f8 2ab18620
+$28   : 81fd2000 81fd3cf0 00468cec 8000e930
+Hi    : 00000000
+Lo    : 00014438
+epc   : 804053c8 0x804053c8
+    Not tainted
+ra    : 8000e930 0x8000e930         	//epc應該要會回去的位置
+Status: 1000fc03    KERNEL EXL IE   	//查 MD00103-2B-4KE-SUM-02.06.pdf 的 5.2.13 p118   檔案在　http://tpesw2/common/vendors/MIPS/mips-doc/
+Cause : d080002c			//查 MD00103-2B-4KE-SUM-02.06.pdf 的 5.2.17 p128 2c/4=11 or (2c>>2)=11 因bit 0-1無效 Coprocessor Unusable exception
+PrId  : 00019070 (MIPS 4KEc)
+Modules linked in: fuse cdb
+Process clk (pid: 818, threadinfo=81fd2000, task=80802440, tls=00000000)
+Stack : 803ee9c0 08f9d230 00000001 00004761 00000001 8000ea7c 803ee9b8 00000000
+        00000000 80076888 81fd3d38 81fd3d3a 00008068 80942658 00000041 800b7d54
+        803ee990 00000029 30003000 ffffffff 803ee9c0 803eef84 00000000 00000000
+        00000001 00000000 00000028 00000004 000200da 000200da 814e3cf0 81435268
+        00000001 00000000 803eef80 2ab7f308 00000002 80076d70 000200da 00000000
+        ...
+8000ea7c :                        proc_cpuclk_write + 0x134	//高
+80076888 :                   get_page_from_freelist + 0x16c
+800b7d54 :                            inode_setattr + 0x1a4
+80076d70 :                   __alloc_pages_nodemask + 0xfc
+800709a4 :                            filemap_fault + 0xac
+80087998 :                               __do_fault + 0x424
+80089a54 :                          handle_mm_fault + 0x31c
+800e88c4 :                          proc_file_write + 0xc0
+800e8804 :                          proc_file_write + 0x0
+800e339c :                           proc_reg_write + 0xd0
+800b8c18 :                                 alloc_fd + 0x84
+8009fea0 :                                vfs_write + 0xac
+8003ad1c :                                sys_wait4 + 0xbc
+800a0058 :                                sys_write + 0x58
+800ae8d4 :                              sys_fcntl64 + 0x98
+80002284 :                               stack_done + 0x20	//低
+
+============================================================================================================
+Stack由低803ee9c0排到高00000000
+執行順序是由高到低
+
+vim a.log		把exception顯示的全複製到log
+scp a.log asli@tpesw1:	到server去跑script
+asli@tpesw1:~/work/proj/openwrt/kernel/linux-2.6.32.11.as$
+mv ~/a.log .
+cat a.log |~scliu/bin/call2sym.py System.map
+
+asli@tpesw1:~/work/proj/openwrt/kernel/linux-2.6.32.11.as$ mips-elf-gdb vmlinux
+模擬器gdb
+(gdb)target sim
+(gdb)load
+(gdb)run
+(gdb) x 0x8000e930
+0x8000e930 <cheetah_cpuclk+412>:        0x08003a4f
+(gdb) x/8i 0x8000e930-16
+   0x8000e920 <cheetah_cpuclk+396>:     jal     0x80007a58 <printk>
+   0x8000e924 <cheetah_cpuclk+400>:     addiu   a0,a0,-16792
+   0x8000e928 <cheetah_cpuclk+404>:     jal     0x804053c8 <calibrate_delay>
+   0x8000e92c <cheetah_cpuclk+408>:     nop
+   0x8000e930 <cheetah_cpuclk+412>:     j       0x8000e93c <cheetah_cpuclk+424>
+   0x8000e934 <cheetah_cpuclk+416>:     move    v0,zero
+   0x8000e938 <cheetah_cpuclk+420>:     li      v0,-1
+   0x8000e93c <cheetah_cpuclk+424>:     lw      ra,20(sp)
+
+x 倒出記憶體
+-16是上下16byte
+
+============================================================================================================
+(gdb) x/8i 0x804053c8-16
+   0x804053b8 <wla_init+1524>:  jr      ra
+   0x804053bc <wla_init+1528>:  addiu   sp,sp,80
+   0x804053c0:  b       0x80404e20 <wla_init+92>
+   0x804053c4:  nop
+   0x804053c8 <calibrate_delay>:        addiu   sp,sp,-56
+   0x804053cc <calibrate_delay+4>:      lui     v0,0x8041
+   0x804053d0 <calibrate_delay+8>:      sw      s5,40(sp)
+   0x804053d4 <calibrate_delay+12>:     lbu     s5,21128(v0)
+(gdb) x/8wx 0x804053c8-12
+0x804053bc <wla_init+1528>:     0x27bd0050      0x1000fe97      0x00000000      0x27bdffc8
+0x804053cc <calibrate_delay+4>: 0x3c028041      0xafb50028      0x90555288      0x3c048038
+
+0x00000000 = nop
+0x27bdffc8  -56 = ffc8 二的補數 CPU Instruction Formats 查 MD00103-2B-4KE-SUM-02.06.pdf 的 10.2 p246 (簡略介紹)
+						詳細版要查 MD00103-2B-4KE-CPU-02.06.pdf ?
+w word
+x hex
+
+void __cpuinit calibrate_delay(void)	開機init一次後就被回收，無法re-call
+
+============================================================================================================
+openwrt/kernel/linux-2.6.32.11.as$ less System.map   //裏面有全部symbol的reg位置
+
+建出 dis 檔
+/kernel/linux-2.6.32.11.as$ mips-openwrt-linux-objdump -d vmlinux > sys.dis
+
+Cpu 0
+$ 0   : 00000000 804b0000 803ac8ac 00000000
+
+803ac8ac 位置為 v0, 往右的 00000000 為 v1
+
+
+
+

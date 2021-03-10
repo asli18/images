@@ -1,0 +1,12 @@
+(1) install kernel cmd (only do once)
+
+sourece kernel_install.sh
+
+
+(2) install driver (do this evevery time after the PC bootup)
+
+source insert_driver.sh
+
+(3) wpa_supplicant process (need verify)
+
+source wpa_sh.sh

@@ -1,0 +1,23 @@
+
+
+1. 改 .conf 檔
+./wpa_supplicant.sh
+---
+sudo ifconfig lynx-0 hw ether 00:12:13:14:15:16                                                     |
+#cd ~/work/lynx-2.0_test_image_r46/lynx-2.0_test_image/wpa_conf/
+sudo wpa_supplicant -Dnl80211 -c ~/work/lynx-2.0_test_image_r46/lynx-2.0_test_image/wpa_conf/${1}.conf -i lynx-0 -dt 
+---
+
+2. 連上線以後要 ip
+
+sudo dhclient lynx-0
+
+or
+
+自己設定 ip , lynx 應該會去通知 AP 他要這個 ip
+
+ifconfig lynx-0 192.168.101.150
+
+
+
+

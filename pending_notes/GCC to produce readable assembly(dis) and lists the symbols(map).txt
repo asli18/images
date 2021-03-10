@@ -1,0 +1,11 @@
+
+
+
+ba-elf-objdump -S rlib/released/v2/rlib_v2
+
+ba-elf-objdump -help
+
+
+nm -n rlib/released/v2/rlib_v2
+
+

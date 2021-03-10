@@ -1,0 +1,58 @@
+
+python3
+
+idle-python3.4
+python3 t.py 執行
+
+======================================================================================================================
+Python 3 之後的版本直接支援 Unicode 編碼，這是說，程式檔案必須以 Unicode 編碼儲存，同時除了關鍵字 (keyword) 及內建名稱外
+，識別字 (identifier) 皆可使用 Unicode 編碼的符號，也就是說，可以直接用中文當變數 (variable) 名稱。
+
+
+程式利用 random 模組 (module) 中的 randint() 函數 (function) 隨機取得 1 到 10 之間的一個數字當「答案」
+
+import random
+答案 = random.randint(1, 10)
+
+
+使用 Tk 首先要 import tkinter ，這裡用 from ， import 之後星號表示所有名稱
+這使我們在程式中可以直接使用 tkinter 中的名稱，不需要連帶寫出 tkinter
+from tkinter import *
+
+sudo miniterm.py -p /dev/ttyUSB0 -b115200
+
+=====================================================================================================================
+unicode_string.encode(encoding)
+byte_string.decode(encoding)
+
+.encode('utf-8')
+.decode('utf-8')
+
+msg=b"msg" 等於  msg=("msg").encode('utf-8')
+
+ser.write(("msg\r\n").encode('utf-8'))
+print((b"msg").decode('utf-8'),"")
+
+=====================================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

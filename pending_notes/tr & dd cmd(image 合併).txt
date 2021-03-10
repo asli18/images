@@ -1,0 +1,90 @@
+
+
+read me first
+*** http://superuser.com/questions/274972/how-to-pad-a-file-with-ff-using-dd
+
+
+tr command
+
+建出一個檔案 test.img 大小為 1024, 把檔案內 0x00 改成 0xFF
+
+0xFF in octal is \377
+
+
+tr "\000" "\377" < /dev/zero | dd of=test.img ibs=1 count=1024
+
+
+dd command
+https://blog.gtwang.org/linux/dd-command-examples/
+
+Note the conv=notrunc which tells dd to not truncate the output file.
+
+------------------------------------------------
+要建一個 80000 = 524288 hex 大小的 .img 檔
+flash size 64 kB * 8 = 512 
+
+把 iot_boot.img 放在 0 ~ 10000, mp_test_uart.img 放在 60000 ~ 80000 的位置
+
+1. 建一個 512k 大小的檔案，內容全是 0xFF
+tr "\000" "\377" < /dev/zero | dd of=test.img ibs=1 count=524288
+
+or
+
+tr "\000" "\377" < /dev/zero | dd of=test.img ibs=1 count=512K
+
+524288+0 records in
+1024+0 records out
+524288 bytes (524 kB, 512 KiB) copied, 0.100113 s, 5.2 MB/s
+
+du -sh test.img 
+512K    test.img
+
+hexdump test.img 
+0000000 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0080000
+
+
+2. 將 iot_boot.img 從 0 的位置放進去
+
+dd if=iot_boot.img of=test.img conv=notrunc
+
+
+3. 將 mp_test_uart.img 從 60000 的位置放進去
+
+dd if=mp_test_uart.img of=test.img ibs=128K obs=128K count=1 seek=3 conv=notrunc
+
+
+輸入最多 192K * 1(count) 的大小，輸出到test.img 檔案 128K * 1(seek) 的位置
+dd if=iot_demo.img of=test.img ibs=192K obs=128K conut=1 seek=1 conv=notrunc
+
+
+---------------
+cheetah Makefile 範例
+
+Aston,
+以下兩個範例，各做 4MB 及 12MB flash
+tr  就是把 0x00 換成 0xff
+dd ... notrunc..   會沒有修改的內容（就是 0xff),  seek=x 可以定位到一個想要的 offset (obs*seek)
+
+http://tpesw1/trac/tpesw/browser/cchip/trunk/Cheetah-SDK-montage-for-Linux-x86_64/Makefile
+
+
+103	nomp_4m:
+104	        @touch $(IMAGEDIR)/$(4MFILE)
+105	        tr  "\000" "\377" < /dev/zero | dd of=$(IMAGEDIR)/$(4MFILE) ibs=1 count=8388608
+106	        $(MKJFFS2) -r $(JFFS2_DIR) -b -o 4m-jffs2.img -m none -e 0x10000 --pad=0x400000 -n
+107	        @mv 4m-jffs2.img $(IMAGEDIR)/4m-jffs2.img
+108	        @dd if=$(IMAGEDIR)/boot.img of=$(IMAGEDIR)/$(4MFILE) conv=notrunc
+109	        @dd if=$(IMAGEDIR)/$(CAPPFILE) of=$(IMAGEDIR)/$(4MFILE) ibs=4M obs=128K count=1 seek=1 conv=notrunc
+110	        @dd if=$(IMAGEDIR)/4m-jffs2.img of=$(IMAGEDIR)/$(4MFILE) ibs=4M obs=4M count=1 seek=1 conv=notrunc
+111	
+112	nomp_12m:
+113	        @touch $(IMAGEDIR)/$(12MFILE)
+114	        tr  "\000" "\377" < /dev/zero | dd of=$(IMAGEDIR)/$(12MFILE) ibs=1 count=12582912
+115	        $(MKJFFS2) -r $(JFFS2_DIR) -b -o 12m-jffs2.img -m none -e 0x10000 --pad=0xc00000  -n
+116	        @mv 12m-jffs2.img $(IMAGEDIR)/12m-jffs2.img
+117	        @dd if=$(IMAGEDIR)/boot.img of=$(IMAGEDIR)/$(12MFILE) conv=notrunc
+118	        @dd if=$(IMAGEDIR)/$(CAPPFILE) of=$(IMAGEDIR)/$(12MFILE) ibs=4M obs=128K count=1 seek=1 conv=notrunc
+119	        @dd if=$(IMAGEDIR)/12m-jffs2.img of=$(IMAGEDIR)/$(12MFILE) ibs=12M obs=4M count=1 seek=1 conv=notrunc
+

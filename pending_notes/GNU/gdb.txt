@@ -1,0 +1,102 @@
+
+
+set $pc=0x08
+set *(int *)0x4=0xc200
+info reg
+p $pc  查看目前位置
+si     單步執行
+x/128x 0x0
+
+
+"GBD把 0x0-0xc100 倒出來到test.bin (再用 meld 比對)"
+(gdb) dump memory test.bin 0x0 0xc100    
+"****************************"
+
+hexdump -C work/rlib_all.img |less
+hexdump -C work/rlib_all.img > work/rlib.bin
+===================================================================================
+
+"exception 發生透過 JTAG 連線
+
+asli@tpesw1:~/work/proj/lynx-2.0$
+ba-elf-gdb rlib/rlib
+or
+ba-elf-gdb proj/flash_boot/flashb
+
+(gdb)
+target jtag jtag://192.168.65.97:9999
+load
+load proj/boot_test/im_header
+load proj/boot_test/app2
+set $pc=0x68008
+c
+
+
+spc           查所有的
+spr SPR_EPCR  看exception 位置
+    SPR_SR
+    SPR_ESR
+
+===================================================================================
+"GBD把 0x0-0xc100 倒出來到test.bin (再用 meld 比對)"
+(gdb) dump memory test.bin 0x0 0xc100    
+
+watch *(int *)0x0
+當 位置的值被改變 就會中斷
+若是 dma 則可能來不及攔到產生中斷
+
+bt
+backtrace 看之前的位置
+frame 1 可以跳回到前一層的位置，看 info reg
+frame 2 ...
+
+"設定斷點"
+br file:line
+
+"印出全域變數位置跟值
+p ldev
+p ldev->mm
+p ldev->mm.nodelist[2].flink
+
+
+===================================================================================
+ba22 datasheet
+
+info reg
+
+R0 always 0
+R1 stack point, 給 bt 查之前的位置用的, R1 位置比較沒特別意義
+R2 起始位置ldev_g, 若從 rlib 開始run 固定是 0x80 , 若boot from flash, ldev_g 的位置 查flashb.map
+
+R3 R4 R5 是最後一次執行的 function parameter 會隨著 function 內的計算而改變，並無法知道剛進入 function 時的值
+http://stackoverflow.com/questions/1788923/parameter-vs-argument
+
+R9 return address
+
+
+
+
+檔案要沒壓縮過，才能辨識
+../toolchain/mips-openwrt-linux-uclibc/bin/objdump -S u-boot >u-boot.dis
+= ba-elf-objdump -S xxx
+../toolchain/mips-openwrt-linux-uclibc/bin/nm u-boot > system.map
+= ba-elf-nm xxx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

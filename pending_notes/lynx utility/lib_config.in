@@ -1,0 +1,216 @@
+mainmenu_name 'Lynx Firmware Configuration'
+
+	comment ''
+mainmenu_option next_comment
+	comment 'Board Configuration'
+	comment '===================='
+	comment 'Board Configuration'
+	comment '===================='
+		comment ''
+		define_bool CONFIG_CPU_BA2 y
+		define_bool CONFIG_GLOBAL_DATA_PTR y
+
+		int 'ROM Version' CONFIG_ROM_VER
+		bool 'FPGA Platform' CONFIG_FPGA
+		if [ "$CONFIG_FPGA" == "y" ]; then
+			define_int CONFIG_CRYSTAL_CLK 25000000
+		else
+			define_int CONFIG_CRYSTAL_CLK 40000000
+		fi
+
+		bool 'AON Clock Use 40MHZ' CONFIG_AON_CLK_40M
+		bool 'Flash Booting' CONFIG_FLASH_BOOT
+		if [ "$CONFIG_FLASH_BOOT" == "y" ]; then
+			bool '  ATE DUT' CONFIG_ATE_DUT
+			if [ "$CONFIG_ATE_DUT" == "y" ]; then
+				bool '    ATE Golden Unit' CONFIG_ATE_GOLDEN_UNIT
+			fi
+		fi
+		bool 'Do not Reset USB' CONFIG_DONT_RESET_USB
+
+		comment ''
+		bool 'AT Command' CONFIG_AT_CMD_FUNC
+		if [ "$CONFIG_AT_CMD_FUNC" == "y" ]; then
+			define_bool CONFIG_UR_FLOW_CONTROL y
+		else
+			define_bool CONFIG_UR_FLOW_CONTROL n
+		fi
+		if [ "$CONFIG_UR_FLOW_CONTROL" == "y" ]; then
+			int '  RTS Pin' CONFIG_UR_RTS
+			int '  CTS Pin' CONFIG_UR_CTS
+		fi
+
+		comment ''
+endmenu
+
+	comment ''
+mainmenu_option next_comment
+	comment  'Basic Networkng'
+	comment '===================='
+	comment '   Basic Networking'
+	comment '===================='
+		comment ''
+		bool 'FreeRTOS' CONFIG_FREERTOS
+		bool 'OS' CONFIG_OS
+
+		comment ''
+		bool 'MICO SDK' CONFIG_MICO
+		bool 'IOT WDK' CONFIG_IOT_WDK
+
+		comment ''
+		define_bool CONFIG_IPV4 y
+		int 'Socket Size' MEMP_NUM_NETCONN 4
+		bool 'Command' CONFIG_CMD
+		bool 'LWIP' CONFIG_LWIP
+		if [ "$CONFIG_LWIP" == "y" ]; then
+			bool '  HTTP Server' CONFIG_HTTPD
+			if [ "$CONFIG_HTTPD" != "n" ]; then
+				bool '    Web Pages as Data'  CONFIG_WEB_AS_DATA
+			else
+				define_bool CONFIG_WEB_AS_DATA n
+			fi
+			if [ "$CONFIG_WEB_AS_DATA" != "n" ]; then
+				choice 'Compress HTML' \
+					"None CONFIG_COMPRESS_HTML_BY_NONE \
+					html-minifier CONFIG_COMPRESS_HTML_BY_HTMLMINIFIER \
+					PythonHTMLSlimmer CONFIG_COMPRESS_HTML_BY_PYTHONSLIMMER" html-minifier
+				choice 'Compress javascript' \
+					"None CONFIG_COMPRESS_JS_BY_NONE \
+					uglify-js CONFIG_COMPRESS_JS_BY_UGLIFYJS \
+					YUI-compressor CONFIG_COMPRESS_JS_BY_YUICOMPRESSOR" uglify-js
+				choice 'Compress CSS' \
+					"None CONFIG_COMPRESS_CSS_BY_NONE \
+					YUI-compressor CONFIG_COMPRESS_CSS_BY_YUICOMPRESSOR" YUI-compressor
+			fi
+			if [ "$CONFIG_AT_CMD_FUNC" == "y" ]; then
+				define_bool CONFIG_SOCKET_API y
+			else
+				define_bool CONFIG_SOCKET_API n
+			fi
+			bool '  MQTT Client' CONFIG_MQTTC
+		fi
+		if [ "$CONFIG_IOT_WDK" == "y" ]; then
+			define_bool CONFIG_DHCPS y
+			define_bool CONFIG_DHCPC n
+			define_bool CONFIG_PING n
+			define_bool CONFIG_DNS n
+			define_bool CONFIG_FRAG n
+			define_bool CONFIG_DEV y
+			bool '  Humidity & Temperature Sensor' CONFIG_DHT11_SENSOR
+			bool '  PM2.5 Sensor' CONFIG_PM25
+			bool '  Servo Motor' CONFIG_MOTOR
+			bool '  RGB LED' CONFIG_RGB_LED
+			bool '  LED' CONFIG_LED
+			bool '  UART2 as GPIO' CONFIG_UART2_AS_GPIO
+		else
+			if [ "$CONFIG_LWIP" == "y" ]; then
+				bool '  DHCP Server' CONFIG_DHCPS
+				bool '  DHCP Client' CONFIG_DHCPC
+				bool '  Ping' CONFIG_PING
+				bool '  NTP' CONFIG_NTP
+				bool '  DNS Query' CONFIG_DNS
+				bool '  IP Fragment' CONFIG_FRAG
+			fi
+		fi
+		bool 'WOLFSSL' CONFIG_WOLFSSL
+		bool 'AXTLS' CONFIG_AXTLS
+		if [ "$CONFIG_AXTLS" == "y" ]; then
+			bool '  AXTLS Debug message' CONFIG_AXTLS_DEBUG_MSG
+		fi
+		bool 'LIBCOAP' CONFIG_LIBCOAP
+
+		comment ''
+		bool 'MP Test' CONFIG_MP_TEST
+		if [ "$CONFIG_MP_TEST" == "y" ]; then
+			bool '  7000U' CONFIG_MP_TEST_7000U
+			bool '  7000S' CONFIG_MP_TEST_7000S
+			bool '  8000 ' CONFIG_MP_TEST_8000
+		fi
+		bool 'Debug JTAG_EN' CONFIG_JTAG_EN
+
+		comment ''
+endmenu
+
+mainmenu_option next_comment
+	comment 'Wireless LAN'
+	comment '===================='
+	comment '   Wireless LAN     '
+	comment '===================='
+		comment ''
+		bool 'WLAN Function' CONFIG_WLA
+		if [ "$CONFIG_WLA" == "y" ]; then
+			bool '  WMAC Command' CONFIG_CMD_WD
+			bool '  WMAC Debug Message' CONFIG_WLA_DEBUG_MSG
+			if [ "$CONFIG_CMD_WD" == "y" ]; then
+				if [ "$CONFIG_WLA_DEBUG_MSG" == "y" ]; then
+					bool '    RX Buffer Header' CONFIG_DEBUG_WRX_BUFHDR
+					bool '    RX Buffer Full' CONFIG_DEBUG_WRX_BUFFULL
+					bool '    RX Reorder Buffer' CONFIG_WLA_DEBUG_REORDER_BUF
+					bool '    TXRX Dump' CONFIG_WLA_DEBUG_TXRX
+					bool '    FCS Error to CPU' CONFIG_WLA_DEBUG_FCSERR_TOCPU
+					bool '    IP Identification' CONFIG_WLA_DEBUG_IPID
+					bool '    TCP/IP Checksum' CONFIG_WLA_DEBUG_CKSUM
+					bool '    TX Queue' CONFIG_WLA_DEBUG_TXQ
+					bool '    TX Queue Panic' CONFIG_WLA_DEBUG_TXQ_PANIC
+					bool '    AP Mode Power Saving' CONFIG_WLA_DEBUG_AP_PS
+					bool '    P2P NoA' CONFIG_WLA_DEBUG_P2P_NOA
+				fi
+			fi
+			bool '  WMAC Buffer Trace' CONFIG_WLA_DEBUG_SWBUF
+			bool '  BB Command' CONFIG_CMD_BB
+			bool '  RF Command' CONFIG_CMD_RF
+
+			comment ''
+			bool '  Cheetah RF'  CONFIG_MONTE_CARLO
+			bool '  RF Calibration' CONFIG_RFC
+				if [ "$CONFIG_RFC" == "y" ]; then
+					bool '    RFC at Bootup' CONFIG_RFC_AT_BOOT
+					bool '    RFC Debug Message' CONFIG_RFC_DEBUG
+					bool '    RFC Analysis'  CONFIG_RFC_ANALYST
+				fi
+			bool '  Channel 14' CONFIG_CH14
+			bool '  Maximum TX power' CONFIG_MAX_TXPWR
+			bool '  Dynamic TX VGA by Temper' CONFIG_DYNAMIC_VGA_BY_TEMPER
+
+			comment ''
+			define_bool CONFIG_WLA_PATCH_V2 y
+			define_bool CONFIG_LARGE_DESCRIPTOR y
+			bool '  Intel VO Test in WMM Certification' CONFIG_WMM_INTEL_CERTIFICATION
+			bool '  Power Saving (Fake Sleep)' CONFIG_FAKE_SLP
+			bool '  Keep Alive' CONFIG_WLA_KEEPALIVE
+			if [ "$CONFIG_WLA_KEEPALIVE" == "y" ]; then
+				bool '    Generate TSF Error' CONFIG_WLA_KEEPALIVE_TSF_ERR
+			fi
+			bool '  Alternative Rate Adaptation' CONFIG_RATEADAPTION2
+			if [ "$CONFIG_RATEADAPTION2" == "y" ]; then
+				bool '    Support HT 40MHz' CONFIG_HT40
+				bool '    Support TXOP Params' CONFIG_TXOP_PARAM
+				bool '    Support TX AMPDU' CONFIG_TXBA
+			fi
+			bool '  AP Mode' CONFIG_AP
+			bool '  Host IBSS' CONFIG_IBSS
+			if [ "$CONFIG_IBSS" == "y" ]; then
+				bool '    IBSS Power Saving (ATIM)' CONFIG_IBSS_ATIM
+			fi
+			bool '  Host WPS'  CONFIG_HOST_WPS
+			if [ "$CONFIG_HOST_WPS" == "y" ]; then
+				bool '    Host P2P' CONFIG_HOST_P2P
+			fi
+			if [ "$CONFIG_LWIP" == "y" ]; then
+				define_bool CONFIG_WPA y
+				define_bool CONFIG_WEP y
+				bool '  Support OMNICONFIG V2' CONFIG_OMNICONFIG
+			else
+				define_bool CONFIG_WPA n
+				define_bool CONFIG_WEP n
+			fi
+
+			comment ''
+			bool '  Reboot on Panic' CONFIG_REBOOT_ON_PANIC
+			bool '  WLAN LED' CONFIG_WLA_LED
+			bool '  WLAN Test' CONFIG_WLA_TEST
+			bool '  Report Debug Info to The Host' CONFIG_HOST_DEBUG
+		fi
+		comment ''
+endmenu
+

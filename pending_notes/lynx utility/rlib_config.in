@@ -1,0 +1,130 @@
+mainmenu_name 'Lynx ROM library Configuration'
+
+	comment ''
+mainmenu_option next_comment
+	comment 'Board Configuration'
+	comment '===================='
+	comment 'Board Configuration '
+	comment '===================='
+		comment ''
+		bool 'FPGA Platform' CONFIG_FPGA
+		choice 'CPU Type' \
+				"BA22 CONFIG_CPU_BA2"
+
+		if [ "$CONFIG_FPGA" == "y" ]; then
+			define_int CONFIG_CRYSTAL_CLK 25000000
+		else
+			define_int CONFIG_CRYSTAL_CLK 40000000
+		fi
+
+		bool 'AON CLOCK USE 40MHZ' CONFIG_AON_CLK_40M
+
+		bool 'IP3280 ARCH' CONFIG_IP3280 y
+		bool 'Boot from ROM' CONFIG_BOOT_FROM_ROM n
+		bool 'Boot from SFlash' CONFIG_BOOT_FROM_SFLASH n
+		bool 'Download APP IMAGE' CONFIG_DOWNLOAD_APP_IMG
+		bool 'Detect package type to select host interface' CONFIG_PKG_DETECTION
+		bool 'Detect package type to select UART interface' CONFIG_UART_DETECTION
+		int 'Main stack size' CONFIG_MAIN_STACK_SIZE 8192
+		hex 'Data buffer start address' CONFIG_DATABUF_START 0x50000
+		hex 'DMA section size' CONFIG_DMA_SIZE 0x4000
+		bool 'Gobal data pointer uses register' CONFIG_GLOBAL_DATA_PTR
+		int 'ROM version' CONFIG_ROM_VER
+		hex 'RTL version' CONFIG_RTL_VER
+
+		comment  'Command line'
+		int  'UART baud rate' CONFIG_CONSOLE_BAUD 115200
+		string 'Prompt string'  CONFIG_PROMPT
+		bool 'CLI history' CONFIG_CLI_HISTORY
+		bool 'UART Loopback test' CONFIG_UART_LOOPBACK
+		bool 'Command' CONFIG_CMD
+		bool 'mem Command' CONFIG_CMD_MEM
+		bool 'Heap information' CONFIG_HEAP_INFO
+		bool 'xmodem Command' CONFIG_XMODEM
+		bool 'Serial flash' CONFIG_SFLASH
+			if [ "$CONFIG_SFLASH" == "y" ]; then
+				bool 'Flash command' CONFIG_CMD_FLASH
+			fi
+
+		bool 'MATH library' CONFIG_MATH
+		bool 'Crypto library' CONFIG_CRYPTO
+
+		comment  'Timer'
+		bool 'Tickless clock' CONFIG_CLOCK_NOISR
+		int 'clock prescale' CONFIG_SYS_CLK_PR 16
+		int 'HZ' CONFIG_SYS_HZ 1000
+		bool 'Memory Test for simulation' CONFIG_MEM_TEST_SIM
+		bool 'ATE Memory AutoTest' CONFIG_ATE_AUTOTEST
+		comment ''
+endmenu
+
+	comment ''
+mainmenu_option next_comment
+	comment 'Wireless LAN'
+	comment '===================='
+	comment '   Wireless LAN     '
+	comment '===================='
+		comment ''
+		bool 'WLAN function' CONFIG_WLA
+		if [ "$CONFIG_WLA" == "y" ]; then
+			bool 'WMAC debug Command' CONFIG_CMD_WD
+			bool 'BB Command' CONFIG_CMD_BB
+			bool 'RF Command' CONFIG_CMD_RF
+
+			bool 'RF calibration' CONFIG_RFC
+			bool 'Keep Alive' CONFIG_WLA_KEEPALIVE
+			bool 'AP mode' CONFIG_AP
+			bool 'IBSS mode' CONFIG_IBSS
+				if [ "$CONFIG_IBSS" == "y" ]; then
+					bool 'IBSS Power Saving (ATIM)' CONFIG_IBSS_ATIM
+				fi
+			bool 'Large Descriptor' CONFIG_LARGE_DESCRIPTOR y
+			comment  'Security'
+			bool 'WPA feature support' CONFIG_WPA
+			bool 'WEP feature support' CONFIG_WEP
+
+			comment  'Debug'
+			define_bool CONFIG_DEBUG_WRX_BUFHDR y
+			define_bool CONFIG_WLA_DEBUG_TXRX y
+			define_bool CONFIG_WLA_DEBUG_SWBUF y
+			define_bool CONFIG_WLA_DEBUG_RXSEQ n
+			define_bool CONFIG_DEBUG_WRX_BUFFULL n
+			define_bool CONFIG_WLA_DEBUG_IPID n
+			define_bool CONFIG_WLA_DEBUG_CKSUM n
+			define_bool CONFIG_WLA_DEBUG_TXQ n
+			define_bool CONFIG_WLA_DEBUG_REORDER_BUF n
+			define_bool CONFIG_WLA_DEBUG_AP_PS n
+			define_bool CONFIG_WLA_DEBUG_P2P_NOA n
+			int 'Debug level' CONFIG_WLA_DEBUG_LEVEL 0
+			bool 'DBG TOOLS' CONFIG_WLA_DEBUG_TOOLS
+			bool 'WLAN Test' CONFIG_WLA_TEST
+			bool 'Debug WRX by GPIO'  CONFIG_WRX_DEBUG_BY_GPIO
+			bool 'Debug RFC'  CONFIG_RFC_ANALYST
+		fi
+		comment ''
+endmenu
+
+	comment ''
+mainmenu_option next_comment
+	comment 'USB'
+	comment '===================='
+	comment '   USB              '
+	comment '===================='
+		comment ''
+		bool 'USB device' CONFIG_USB_DEV
+		bool 'USB device loopback test' CONFIG_USB_LOOPBACK_DEV
+		bool 'USB device gadget zero test' CONFIG_UDC_GADGE_ZERO
+		comment ''
+endmenu
+
+	comment ''
+mainmenu_option next_comment
+	comment 'SDIO'
+	comment '===================='
+	comment '   SDIO              '
+	comment '===================='
+		comment ''
+		bool 'SDIO device' CONFIG_SDIO_DEV
+		comment ''
+endmenu
+

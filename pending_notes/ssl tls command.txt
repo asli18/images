@@ -1,0 +1,75 @@
+
+
+
+
+
+
+
+https://www.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/sy10660_.htm
+https://technet.microsoft.com/en-us/library/cc783349(v=ws.10).aspx
+https://primalcortex.wordpress.com/2016/03/31/mqtt-mosquitto-broker-with-ssltls-transport-security/
+
+openssl s_server --help
+
+openssl s_server -accept 8883 -Verify -cert 490efc59d3-certificate.pem.crt -key 490efc59d3-private.pem.key -CAfile root-CA.crt
+
+openssl s_server -accept 8883 -Verify -state -cert  490efc59d3-certificate.pem.crt -key 490efc59d3-private.pem.key -CAfile root-CA.crt
+
+openssl s_server -accept 8883 -Verify -msg -state -cert 490efc59d3-certificate.pem.crt -key 490efc59d3-private.pem.key -CAfile root-CA.crt
+
+openssl s_server -accept 8883 -Verify -msg -state -debug -cert 490efc59d3-certificate.pem.crt -key 490efc59d3-private.pem.key -CAfile root-CA.crt
+
+./axssl s_client --help
+
+./axssl s_client -connect 127.0.0.1:8883 -state -cert 490efc59d3-certificate.pem.crt -key 490efc59d3-private.pem.key -CAfile root-CA.crt
+
+./axssl s_client -connect 127.0.0.1:8883 -state -debug -cert 490efc59d3-certificate.pem.crt -key 490efc59d3-private.pem.key -CAfile root-CA.crt
+
+./axssl s_client -connect a3l1xvpw0pweuf.iot.us-east-1.amazonaws.com:8883 -state -debug -cert 490efc59d3-certificate.pem.crt -key 490efc59d3-private.pem.key -CAfile root-CA.crt
+
+
+./axssl s_server -accept 8883 -state -cert 490efc59d3-certificate.pem.crt -key 490efc59d3-private.pem.key -CAfile root-CA.crt
+
+axtls server 都不會送出 certificate request 因此 client 就不會在key exchange 時把 private key 用 RSA 加密回傳
+
+
+wolfssl
+
+examples/client/client --help
+
+examples/client/client -h a3l1xvpw0pweuf.iot.us-east-1.amazonaws.com -p 8883 -c ../../AWS_IOT/certs/490efc59d3-certificate.pem.crt -k ../../AWS_IOT/certs/490efc59d3-private.pem.key -A ../../AWS_IOT/certs/root-CA.crt
+
+examples/client/client -h a3l1xvpw0pweuf.iot.us-east-1.amazonaws.com -p 8883 -A ../../AWS_IOT/certs/root-CA.crt -c ../../AWS_IOT/certs/490efc59d3-certificate.pem.crt -k ../../AWS_IOT/certs/490efc59d3-private.pem.key
+
+
+examples/client/client -h 127.0.0.1 -p 8883 -c ../../AWS_IOT/certs/490efc59d3-certificate.pem.crt -k ../../AWS_IOT/certs/490efc59d3-private.pem.key -A ../../AWS_IOT/certs/root-CA.crt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

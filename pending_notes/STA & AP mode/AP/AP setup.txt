@@ -1,0 +1,25 @@
+
+
+
+1. 改 conf 檔
+./hostapd_lynx.sh
+---
+cd ~/work/lynx-2.0_test_image_r46/lynx-2.0_test_image/ap_conf
+sudo hostapd lynx_${1}.conf -dd
+---
+
+2. 決定要 bridge 連外網
+
+
+
+
+
+or
+3. 本機開啟 isc dhcp server
+ref: isc dhcp server setup.txt
+
+
+
+在 ap config file 加上 才能用 hostapd_cli
+ctrl_interface=/var/run/hostapd
+ctrl_interface_group=0

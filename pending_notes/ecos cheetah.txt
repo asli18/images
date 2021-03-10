@@ -1,0 +1,120 @@
+
+
+cheetah 上跑 ecos
+
+ref: 
+http://tpesw1/tpesw/wiki/user_herman/set_env_and_build
+
+asli@tpesw1:~/work/proj$
+
+svn co http://tpesw1/svn/tpesw/trunk/cheetah-1.0 
+or
+//MP
+svn co http://tpesw1/svn/tpesw/trunk/tools/lynx_mp_ecos
+
+svn co http://tpesw1/svn/tpesw/trunk/ecos-2.0 
+export PATH=/opt/montage/mips-elf/bin:$PATH
+export PATH=~/work/proj/ecos-2.0/tools/bin:$PATH
+export ECOS_REPOSITORY=~/work/proj/ecos-2.0/packages
+
+echo $PATH
+echo $ECOS_REPOSITORY
+
+cd cheetah-1.0/
+or
+//MP
+cd lynx_mp_ecos/
+
+
+cheetah lynx mp test
+http://tpesw1/tpesw/log/ecos/trunk/tools/lynx_mp_ecos?action=stop_on_copy&mode=stop_on_copy&rev=&stop_rev=&limit=100
+
+
+build 出 libappa.a, 第一次 make 才需要這樣設定 config 
+make -C config/demo2/ MODEL=asic_ephy 
+or
+make -C config/mptest/ MODEL=test //mp test 用這個
+
+
+mkcl
+mk
+
+build 出 capp.img
+
+scp capp.img aston@192.168.65.97:/tftpboot/capp.img
+
+
+mkcheetah_ecos.sh 
+#make clean
+make
+#rm libapp.a
+#make -C config/mptest/ MODEL=test
+scp capp.img aston@192.168.65.97:/tftpboot/capp.img
+
+
+vim mkcheetah_ecos.sh man/cli/cli_api.c dev/usb/cli_usb.c serv/mp_telnetd/src/mp_telnetd.c
+
+
+cmd>
+set file capp.img or $file=capp.img
+save
+t
+f
+g
+
+
+set mode 1  會從 flash load firmware
+set mode 2  會從 tftp  load firmware
+
+
+"更新 boot code"
+
+asli@tpesw1:~/work/proj/cheetah-1.0$
+cd boot
+make
+build 出 boot.img
+
+scp boot.img aston@192.168.65.97:/tftpboot/
+
+cmd>
+set file boot.img
+t
+f 0     自動燒 boot code 位置 flash 0x0
+r 0
+
+fc 清除 cdb 位置的 data 0x10000 len 0x10000
+
+
+=====================================================================
+cheetah flash memory
+
+0x00000 - 0x10000 64k boot code
+0x10000 - 0x20000 64k cdb  下 fc 可以清掉
+0x20000 - ...         app.img
+
+d 0xbe000000 (flash base) 是讀到flash address 0x0 的位置
+
+
+"改 UART baud rate"
+0xaf002004
+default: 05160005
+
+cmd>clk
+cpu freq=320 MHz
+bus freq=150 MHz
+
+(bus clk/baudrate) << 16
+150M/115200 = 1302.083.. Dec = 0516.155.. Hex
+
+
+
+
+
+
+
+
+
+
+
+
+

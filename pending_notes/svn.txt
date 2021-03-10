@@ -1,0 +1,135 @@
+
+http://blog.xuite.net/chingwei/blog/25557142-%E3%80%90%E7%B3%BB%E7%B5%B1%E3%80%91SVN+%E7%AD%86%E8%A8%98+-+%E5%9F%BA%E6%9C%AC%E6%8C%87%E4%BB%A4
+
+svn help 
+svn help cmd 查詢指令
+
+svn info 顯示 SVN 的資訊
+
+svn st 顯示目前文件及目錄的狀態,從上次up後，目前檔案的狀態，那些有更改
+svn st|grep -v ?    僅列出有更動的檔案並略過未加入 svn db 的檔案
+'' 沒有修改
+M  項目已經修改
+C  項目內容與更新的資料衝突，檔案跟SVN的不同，合併失敗要手動處理
+?  項目不在版本控制下
+D  移除的檔案
+U  有更新
+G  跟SVN上的檔案不同但合併成功
+
+還原這次的修改, 回到前一版的檔案狀態(未 commit 前可用)
+svn revert path/file
+svn revert folder/ *  
+
+下載資料，將SVN上的資料checkout出來，下載前必須先更新，切換到要更新的目錄 svn up
+svn co svn+ssh://trac.net/home/svn/repos/branches/life
+svn co http://tpesw1/svn/tpesw/trunk/lynx-2.0
+
+svn mv old_file new_file 改檔名，但之前的紀錄還是會繼續保留
+
+List: (list 可簡寫成 ls), 看上面有哪些檔案/資料
+svn ls http://SVN_PATH/svn_project
+svn ls file:///SVN_PATH/svn_project
+
+
+將檔案或目錄加進 SVN ，之後還要再 commit 才會真的加進 SVN
+svn add file
+svn add folder
+.bash_aliases
+
+svn delte(rm)
+
+svn info   svn資訊
+s.i
+
+將目前有修改的 commit 到 SVN
+svn ci (全部有修改的都會commit)
+svn ci file1 file2 file3 (只將file1 2 3 commit)
+
+s.u
+svn up 更新為SVN上的最新版本
+svn up -r200 123.txt 更新的進階用法-還原
+
+log : 如果沒輸入參數, 預設會把所有 commit log 都列出來
+svn log
+svn log -l 10   顯示 10 筆(最新 10筆 Log)
+svn log -c 100 or svn log -r 100    顯示 revision 100 的 Log
+svn log -v -c 100  顯示  revision 100 的詳細 Log
+===========================================================================================
+diff : 將現在的檔案跟SVN做比較
+svn diff (比對全部)
+svn diff file
+svn diff folder
+svn diff -r 100:101 也可以 101:100
+svn diff > out.txt
+svn diff | grep Index:
+svndiff file   ->就會進去meld程式
+
+aston@aston-HP-ProDesk-600-G1-DM:~$ ssh asli@tpesw1 -X
+asli@tpesw1:~$ echo $DISPLAY
+localhost:15.0
+
+
+asli@tpesw1:~$ export DISPLAY=localhost:15.0  開啟通道(因為screen很久沒重開，所以才需要重新設定此項)
+asli@tpesw1:~$ svndiff file   ->就會進去meld程式
+
+===========================================================================================
+s.s
+svn st|grep -v ?    僅列出有更動的檔案並略過未加入 svn db 的檔案(-v: invert match ?:不在版本控制下 'M':項目已經修改過)
+svn st|grep ^M   一樣是列出有更動的檔案
+
+svn diff > 1.diff   比較差異，將差異輸出到1.diff
+
+svn merge -r N1:N2 path 把N1到(N2+1)改過的檔案 倒回到 N2
+svn merge -r12916:12909 http://tpesw1/svn/tpesw/trunk/lynx-2.0
+
+svn resolved file  如果檔案有conflict，處理完後，要resolved，才可以ci
+
+svn status "~" .svn 被刪除
+http://blog.carlcarl.me/249/svn-status/
+
+svn status "L"  locked
+svn cleanup at the top of my working copy
+or
+find . -name 'lock' -exec rm -v {} \;
+https://ryanolson.wordpress.com/2012/08/27/svn-how-to-fix-working-copy-is-locked/
+http://stackoverflow.com/questions/127932/working-copy-xxx-locked-and-cleanup-failed-in-svn
+
+===========================================================================================
+scp asli@tpesw2:/tmp/xxx .   從server2複製xxx檔案到目前目錄
+scp -r 複製目錄及目錄內的所有專案
+p0 xxx.diff           patch -p0 -i xxx.diff 修改我目前的檔案
+===========================================================================================
+
+更改svn路徑 URL, Repository
+svn sw --relocate http://tpe2 http://tpesw1 .
+
+
+將SVN上的資料export出來，不包含.svn
+svn export svn+ssh://trac.net/home/svn/repos/branches/life
+
+import : 將整個資料匣，加到SVN中。
+EX:將life資料匣，import到SVN的trunk/life
+svn import life svn+ssh://chingwei@trac.net/svn/trunk/life
+
+如果改的東西還沒有送交 (commit) 的話，只要下
+svn revert path/filename.txt  就可以回復到原本的狀態
+但是如果已經 commit 出去的，就不能用 svn revert 來處理。
+svn merge -r N+1:N path/filename.txt
+把從 revision N 到 N+1 做的事逆向 merge 回來，然後先 svn diff 看一下，沒問題就再 svn ci 上去。
+有問題的話，就再下 svn revert 就可以了。
+
+
+要回復到3390之前的內容-> 把3389到3390更動的部份，反向回來
+svn merge -r 3390:3389 http://tpesw1/svn/linux2.6/openwrt/kernel/linux-2.6.32.11.as
+
+
+用 Subversion 的 Merge 來 Undo
+https://blog.gslin.org/archives/2007/06/20/1210/
+
+
+權限
+把檔案修改成可執行
+svn propset svn:executable ON package/montage/rootfs/src/files/sbin/mp
+
+
+

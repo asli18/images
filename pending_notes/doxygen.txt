@@ -1,0 +1,79 @@
+
+
+local 因為linux版本跟 server不同，出來的樣式會不一樣
+local 比較新 ubuntu 14.04 LTS
+
+cp Doxyfile lib/common/  這樣就不會全部的都建出來
+cd lib/common
+sudo doxygen Doxyfile
+
+開啟 rtf/refman.rtf
+
+ref
+http://www.stack.nl/~dimitri/doxygen/manual/commands.html
+
+example
+
+/**
+ * Set PWM enable
+ *
+ * UART channel 1 use the same pin as PWM0,1 (GPIO6,7)
+ *
+ * UART channel 2 use the same pin as PWM2,3 (GPIO8,9)
+ * @param pwm_ch 0 ~ 3 (GPIO 6 ~ 9)
+ * @param value 0: disable\n 1: enable
+ * @return None
+*/
+
+
+/**
+ * Set PWM polarity
+ * @param pwm_ch 0 ~ 3 (GPIO 6 ~ 9)
+ * @param value 0: active low\n 1: active high
+ * @return None
+ */
+
+/**
+ * Uart configuration
+ * @param br_id baudrate table index 0 ~ 12\n
+ *  0: 1200\t \t \t \t \t 1: 2400\t \t \t \t \t \t \t 2: 4800\n 3: 9600\t \t \t \t \t 4: 19200\t \t \t \t \t 5: 38400\n 6: 57600\t \t \t
+ *  7: 115200\t \t \t 8: 230400\n 9: 460800\t 10: 500000\t 11: 576000\n 12: 921600
+ * @param parity 0: none\n 1: odd\n 2:even
+ * @param stopbits 1, 2 bit
+ * @param chan uart chan 0 ~ 2
+ * @return None
+ */
+
+
+/**
+ * Read serial data
+ * @param   mode
+ *  0: read one byte\n
+ *  1: read bytes\n
+ *  2: read bytes until terminator character
+ * @param   chan uart channel
+ * @param   *buf read buffer pointer
+ * @param   len data length
+ * @param   end_c terminator character
+ * @return
+ *  mode 0: return the first byte of incoming serial data (-1 means no data available)\n
+ *  mode 1, 2 :\t return data length (0 means no valid data was found)
+ */
+
+/*
+ * Read serial string data
+ *
+ * Need to free buffer when the data is no longer in use
+ * @param   mode serial read string mode\n
+ *  0: keep reading until string end '\0'\n
+ *  1: keep reading until terminator character
+ * @param   chan uart channel 0 ~ 2
+ * @param   end_c terminator character
+ * @return  a string data buffer point\n NULL: don't have enough memory
+ */
+
+
+
+
+
+

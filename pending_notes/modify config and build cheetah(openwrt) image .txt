@@ -1,0 +1,135 @@
+
+
+
+svn co http://tpesw1/svn/linux2.6/openwrt
+
+user space(root filesystem)
+openwrt/camelot
+
+kernal space
+/openwrt/kernel/linux-2.6.32.11.as
+
+~/work/proj/openwrt/camelot$ cp target/linux/montage/cheetah/configs/default.wifi_speaker .config   
+
+make clean all
+make -j8	//build all
+make clean	//clean keranl image
+make target/install -j8 //build kernal
+
+openwrt/camelot/bin/montage/openwrt-montage-firmware-squashfs.img
+scp bin/montage/openwrt-montage-firmware-squashfs.img aston@192.168.65.97:/tftpboot/linux.img
+
+
+openwrt
+dmesg     顯示所有儲存的訊息
+dmesg -n8 將顯示門檻降至最低(INFO, ERROR, WARNING... 都會顯示)
+
+
+debug 用 printk("[%s:%d]\n",__func__,__LINE__);
+
+
+modify config 
+------------------------------------------------------------------------------
+1.kernel space  
+	asli@tpesw1:~/work/proj/openwrt/kernel/linux-2.6.32.11.as$ make menuconfig　　　(kernel　config
+								   mkm
+2.開啟
+	Machine selection -> <M>Cheetah USB driver, <M>Enable Host module, <M>Enable Device module
+                     	     Cheetah SDHCI driver (MMC block device driver會被自動帶起)
+	Device Drivers -> USB support -> <M>Support for Host-side USB 
+	Device Drivers -> USB support -> USB Gadget Support -> 設定 USB Gadget Drivers <M> 和 File-backed Storage Gadget <M>
+					<M>EHCI controller (Host)
+					 USB mass storage (Host 讀寫USB)
+	asli@tpesw1:~/work/proj/openwrt/camelot$ mkm          (openwrt 的config 
+	kernel modules -> USB support ->  設定<*>kmod-usb-file-storage
+
+3.改完之後會存在/work/proj/openwrt/kernel/linux-2.6.32.11.as/.config
+	"當在kernal space改完後產生config檔,需要壓到user space的config檔才做make"
+	有改過kernal space 的 config 才要需要這動作，因為 build 的時候 user space 會用 default config 蓋掉 kernal 的 config
+	cd ~/work/proj/openwrt/camelot
+	cp ../kernel/linux-2.6.32.11.as/.config target/linux/montage/cheetah/config-2.6.32-STD_WIFI_SPK  
+
+	
+	以下這部份只需設定一次,不用每次
+	asli@tpesw1:~/work/proj/openwrt/camelot$ cp target/linux/montage/cheetah/configs/default.wifi_speaker .config   
+	把openwrt的預設config檔改成wifi speaker的設定,這樣才會自動去抓上面的config-2.6.32-STD_WIFI_SPK,
+	然後再改openwrt的config　<*>kmod-usb-file-storage
+
+	target/linux/montage/cheetah/ 　下都是profile　(不同project)
+
+4.然後 Build and load imagemk
+	build all    asli@tpesw1:~/work/proj/openwrt/camelot$ make -j8 
+	build kernal asli@tpesw1:~/work/proj/openwrt/camelot$ make target/install -j8
+--------------------------------------------------------------------------------------------
+接著把img檔透過scp copy到local的tftpboot, local端開啟tftp功能IP要與版子相同, 再經由tftp load 到版子上的buffer，接著燒錄
+
+5.從server複製到本機,順便改名為linux.iMg 或別的
+	asli@tpesw1:~/work/proj/openwrt/camelot$
+	scp bin/montage/openwrt-montage-firmware-squashfs.img aston@192.168.65.97:/tftpboot/linux.iMg
+		
+	openwrt/kernel/linux-2.6.32.11.as$
+	kernal image  capp.img
+	scp capp.img aston@192.168.65.97:/tftpboot/linux.iMg
+
+sudo ifconfig eth1 192.168.xxx.xxx   (IP要與版子的server相同 default:192.168.0.2)
+開啟tftp server (tftpd)
+sudo service tftpd-hpa restart
+
+user space
+target/linux/montage/cheetah/configs/default.cheetah 
+
+要用sudo -x asli@tpesw1 才能 meld
+Meld diff比對code 
+asli@tpesw1:~/work/proj/openwrt/camelot$
+meld target/linux/montage/cheetah/config-2.6.32 ../kernel/linux-2.6.32.11.as/.config
+
+
+Build and load image
+--------------------------------------------------------------------------------------------
+ssh asli@tpesw1
+
+// build cheetah image
+cd ~/work/prok/openwrt/camelot
+cp target/linux/montage/cheetah/configs/default.cheetah .config 
+make -j8
+
+// 若只要 build kernel
+cd camelot
+make target/install -j8
+
+// image 產生
+openwrt/camelot/bin/montage/openwrt-montage-firmware-squashfs.img
+--------------------------------------------------------------------------------------------
+minicom
+cmd>set 看目前狀態 資訊
+t 	會從本機的tftp 下載 linux.iMg檔
+改下載的檔名
+$file=filename
+
+fc      flash erase
+fc 20000 740000
+
+
+fa 	燒錄進flash, 直接 fa 就可以
+g	開始run openwrt
+r	reboot
+
+root@router:/#
+lsusb 列出usb device
+
+================================================================================================================
+修改 target/linux/montage/cheetah/ 下的 defconfig 檔
+在 kernel 改過 menuconfig 然後build 產生新的.config
+"執行下面的 script 一次修改全部的 defconfig 檔
+"asli@tpesw1:~/work/proj/openwrt/camelot$ ./scripts/update_montage_kernel_defconfig.sh
+
+有新增的config都要蓋回 default config 然後上傳, 若openwrt config有修改
+那SDK也要改，參考openwrt config的寫法
+"openwrt/camelot/target/linux/montage/cheetah/configs/default.cheetah_sdk  (4463)"
+================================================================================================================
+
+
+
+
+
+

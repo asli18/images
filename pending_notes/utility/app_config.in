@@ -1,0 +1,136 @@
+mainmenu_name 'Lynx Firmware Configuration'
+
+	comment ''
+mainmenu_option next_comment
+	comment 'Board Configuration'
+	comment '===================='
+	comment 'Board Configuration '
+	comment '===================='
+		comment ''
+		bool 'FPGA Platform' CONFIG_FPGA
+		int 'ROM version' CONFIG_ROM_VER
+		choice 'CPU Type' \
+				"BA22 CONFIG_CPU_BA2"
+		int 'Crystal Clock' CONFIG_CRYSTAL_CLK 40000000
+		int 'System Clock' CONFIG_SYS_CLK 40000000
+		hex 'Data buffer start address' CONFIG_DATABUF_START 0x40000
+		hex 'DMA section size' CONFIG_DMA_SIZE 0x8000
+		bool 'Gobal data pointer uses register' CONFIG_GLOBAL_DATA_PTR
+		bool 'Run NIC mode in Application' CONFIG_NIC_MODE
+		bool 'UART Loopback test' CONFIG_UART_LOOPBACK
+		bool 'mem Command' CONFIG_CMD_MEM
+		bool 'Memory Test' CONFIG_MEM_TEST
+			if [ "$CONFIG_MEM_TEST" == "y" ]; then
+				bool 'Memory Test for simulation' CONFIG_MEM_TEST_SIM
+			fi
+		bool 'Dhrystone Test' CONFIG_DHRYSTONE_TEST
+		comment ''
+endmenu
+
+	comment ''
+
+if [ "$CONFIG_NIC_MODE" == "n" ]; then
+mainmenu_option next_comment
+	comment 'IOT'
+	comment '===================='
+	comment '    IOT Library     '
+	comment '===================='
+		comment ''
+		bool 'AT command' CONFIG_AT_CMD_FUNC
+		bool 'OS' CONFIG_OS
+			if [ "$CONFIG_OS" == "y" ]; then
+				bool 'OS Thread Test' CONFIG_OS_TEST
+			fi
+		bool 'LWIP' CONFIG_LWIP
+		define_bool CONFIG_IPV4 y
+
+		comment ''
+endmenu
+	define_int EXTRA_BUF_SIZE 4096
+else
+	define_int EXTRA_BUF_SIZE 8192
+fi
+	comment ''
+mainmenu_option next_comment
+	comment 'Wireless LAN'
+	comment '===================='
+	comment '   Wireless LAN     '
+	comment '===================='
+		comment ''
+		bool 'WLAN function' CONFIG_WLA
+		if [ "$CONFIG_WLA" == "y" ]; then
+			bool 'WMAC debug Command' CONFIG_CMD_WD
+			bool 'BB Command' CONFIG_CMD_BB
+			bool 'RF Command' CONFIG_CMD_RF
+
+			bool 'RF calibration' CONFIG_RFC
+			bool 'MLME' CONFIG_MLME
+			bool 'Keep Alive' CONFIG_WLA_KEEPALIVE
+			bool 'AP mode' CONFIG_AP
+			bool 'IBSS mode' CONFIG_IBSS
+				if [ "$CONFIG_IBSS" == "y" ]; then
+					bool 'IBSS Power Saving (ATIM)' CONFIG_IBSS_ATIM
+				fi
+			define_bool CONFIG_LARGE_DESCRIPTOR y
+			if [ "$CONFIG_NIC_MODE" == "n" ]; then
+				define_bool CONFIG_WPA y
+				define_bool CONFIG_WEP y
+			else
+				define_bool CONFIG_WPA n
+				define_bool CONFIG_WEP n
+			fi
+
+			comment  'Debug'
+			define_bool CONFIG_DEBUG_WRX_BUFHDR y
+			define_bool CONFIG_WLA_DEBUG_TXRX y
+			define_bool CONFIG_WLA_DEBUG_SWBUF y
+			bool 'Intel VO test in WMM certification' CONFIG_WMM_INTEL_CERTIFICATION
+			int 'Debug level' CONFIG_WLA_DEBUG_LEVEL 0
+			bool 'RX buffer full' CONFIG_DEBUG_WRX_BUFFULL
+			bool 'TX queue' CONFIG_WLA_DEBUG_TXQ
+			bool 'Reorder Buffer' CONFIG_WLA_DEBUG_REORDER_BUF
+			bool 'IP identification' CONFIG_WLA_DEBUG_IPID
+			bool 'TCP/IP checksum' CONFIG_WLA_DEBUG_CKSUM
+			bool 'AP mode power saving' CONFIG_WLA_DEBUG_AP_PS
+			bool 'P2P NoA' CONFIG_WLA_DEBUG_P2P_NOA
+			bool 'DBG TOOLS' CONFIG_WLA_DEBUG_TOOLS
+			bool 'WLAN Test' CONFIG_WLA_TEST
+			bool 'Debug RFC'  CONFIG_RFC_ANALYST
+			bool 'USE HOST WPA_SUPPLICANT WPS'  CONFIG_HOST_WPS
+			        if [ "$CONFIG_HOST_WPS" == "y" ]; then
+				    bool 'Support P2P by WPA_SUPPLICANT' CONFIG_HOST_P2P
+			        fi
+		fi
+		comment ''
+endmenu
+
+	comment ''
+mainmenu_option next_comment
+	comment 'USB'
+	comment '===================='
+	comment '   USB              '
+	comment '===================='
+		comment ''
+		bool 'USB device' CONFIG_USB_DEV
+		bool 'USB CDC-ACM device' CONFIG_USB_CDC_ACM_DEV
+		bool 'USB device loopback test' CONFIG_USB_LOOPBACK_DEV
+		bool 'USB device gadget zero test' CONFIG_UDC_GADGE_ZERO
+		comment ''
+endmenu
+
+	comment ''
+mainmenu_option next_comment
+	comment 'SDIO'
+	comment '===================='
+	comment '   SDIO              '
+	comment '===================='
+		comment ''
+		bool 'SDIO device' CONFIG_SDIO_DEV
+		if [ "$CONFIG_SDIO_DEV" != "n" ]; then
+			bool 'Verify SDIO' CONFIG_SDIO_VERIFY_IP n
+			comment '  Verify SDIO with Memory Map: Fun0:0x20000 Fun1:0x40000'
+			bool 'SDIO device loopback test' CONFIG_SDIO_LOOPBACK_DEV
+		fi
+		comment ''
+endmenu
+

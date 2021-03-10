@@ -1,0 +1,21 @@
+
+
+
+
+System back 備份
+
+live system create
+include user data files
+creat New
+
+or
+
+conver to iso 
+for VM 使用
+
+
+
+
+
+
+

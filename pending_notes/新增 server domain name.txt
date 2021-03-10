@@ -1,0 +1,12 @@
+
+
+sudo vi /etc/hosts
+
+...
+
+192.168.65.34	tpesw1
+192.168.65.35	tpesw2
+8.8.8.8			google
+
+...
+

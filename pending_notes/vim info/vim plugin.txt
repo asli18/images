@@ -1,0 +1,20 @@
+
+
+cscope 
+ctag
+taglist
+MiniBufExpolorer
+
+~/.vim/plugin/
+cscope_maps.vim  minibufexpl.vim  taglist.vim //可從別台電腦複製
+
+
+sudo apt-get install cscope
+mkdir -p ~/.vim/plugin
+cd ~/.vim/plugin
+wget http://cscope.sourceforge.net/cscope_maps.vim  
+
+
+
+http://easwy.com/blog/archives/advanced-vim-skills-cscope/
+http://easwy.com/blog/archives/advanced-vim-skills-use-ctags-tag-file/

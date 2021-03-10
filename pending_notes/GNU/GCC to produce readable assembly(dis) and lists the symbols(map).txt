@@ -1,0 +1,21 @@
+
+
+http://sp1.wikidot.com/gnulinker
+
+
+ba-elf-objdump --help
+Display information from object <file(s)>.
+-S, --source             Intermix source code with disassembly
+倒出組語
+
+ba-elf-objdump -S rlib/released/v2/rlib_v2
+
+
+nm --help
+List symbols in [file(s)] (a.out by default)
+
+-n, --numeric-sort     Sort symbols numerically by address
+
+nm -n rlib/released/v2/rlib_v2
+
+

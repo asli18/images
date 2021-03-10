@@ -1,0 +1,14 @@
+
+
+
+
+
+
+
+
+vim /etc/ssh/sshd_config
+PermitRootLogin yes
+
+
+client 
+ssh root@192.168.xxx.xxx

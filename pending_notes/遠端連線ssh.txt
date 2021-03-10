@@ -1,0 +1,76 @@
+
+
+
+http://linux.vbird.org/linux_server/0310telnetssh/0310telnetssh.php#ssh_start
+
+https://www.cyberciti.biz/faq/howto-start-stop-ssh-server/
+啟動 ssh 服務： 
+
+service ssh help
+ * Usage: /etc/init.d/ssh {start|stop|reload|force-reload|restart|try-restart|status}
+
+
+root@aston-HP-ProDesk-600-G1-DM:~# service ssh stop
+ssh stop/waiting
+(reverse-i-search)`net': apt-get install tftp-hpa tftpd-hpa openbsd-i^Ctd sysvconfig debian-helper-scripts
+root@aston-HP-ProDesk-600-G1-DM:~# netstat -tl
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 aston-HP-ProDesk:domain *:*                     LISTEN     
+tcp        0      0 localhost:ipp           *:*                     LISTEN     
+tcp6       0      0 ip6-localhost:ipp       [::]:*                  LISTEN  
+
+service ssh start
+開啟後看的到多出 ssh 項目
+
+root@aston-HP-ProDesk-600-G1-DM:~# netstat -tl
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 aston-HP-ProDesk:domain *:*                     LISTEN     
+tcp        0      0 *:ssh                   *:*                     LISTEN     
+tcp        0      0 localhost:ipp           *:*                     LISTEN     
+tcp6       0      0 [::]:ssh                [::]:*                  LISTEN     
+tcp6       0      0 ip6-localhost:ipp       [::]:*                  LISTEN     
+
+
+or
+
+sudo stop ssh
+sudo start ssh 
+sudo restart ssh
+sudo status ssh
+
+
+ssh 用戶端連線： 
+
+[root@test root]# ssh user@hostname 
+
+
+開放 root 登入
+
+sudo vim /etc/ssh/sshd_config
+
+修改
+PermitRootLogin yes
+sudo service ssh restart
+
+
+若 client 還是無法用 root 登入，那有可能是沒有設定 root 帳號
+
+Enabling the root account:
+
+sudo -i
+To enable the Root account (i.e. set a password) use:
+
+sudo passwd root
+
+
+
+
+
+
+
+
+
+
+

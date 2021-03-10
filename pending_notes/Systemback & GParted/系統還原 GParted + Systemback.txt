@@ -1,0 +1,25 @@
+
+
+Create New
+
+1. linux-swap, size= RAM x 2
+
+2. format: ext4
+
+
+/*======================================================*/
+
+Systemback
+
+System copy
+
+New mount Point
+
+1. mount SWAP
+
+2. ext4 mount / 根目錄
+
+3. select copy user data files
+
+4. install bootloader /dev/sda (必須要在硬碟最外層目錄！)
+

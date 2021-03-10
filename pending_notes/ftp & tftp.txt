@@ -1,0 +1,75 @@
+tftp
+-------------------------------------
+==============================================
+http://b8807053.pixnet.net/blog/post/3611851-ubuntu-%E5%AE%89%E8%A3%85-tftp-server
+
+sudo apt-get install tftpd （服务端）
+sudo apt-get install tftp （客户端） 
+sudo apt-get install xinetd 
+
+cd /etc/xinetd.d/
+sudo vi tftp
+输入
+
+service tftp
+{
+socket_type = dgram
+protocol = udp
+wait = yes
+user = root
+server = /usr/sbin/in.tftpd
+server_args = -s /tftpboot
+disable = no
+per_source = 11
+cps = 100 2
+flags = IPv4
+}
+
+sudo mkdir /tftpboot
+sudo chmod 777 /tftpboot/
+
+/etc/init.d/xinetd restart
+==============================================
+
+local的tftpboot 對應 asli@tpesw1的 tftpboot
+重啟tftp伺服器
+sudo service tftpd-hpa restart
+
+確認開啟 tftpd (tftp server)
+ps -aux|grep tft 
+
+在server  tftp 192.168.65.97 
+loacl     tftp tpesw1
+
+bin
+get
+put
+
+tftp> q 離開 tftp
+-------------------------------------
+
+ftp
+local 連 ftp server 版子進入openwrt
+192.168.0.1 版子的IP
+
+openwrt 開啟ftp
+asli@tpesw1:~/work/proj/openwrt/camelot$ mkm          (openwrt 的config 
+Network-> <*>stupid-ftpd
+
+ftp 192.168.0.1 2121
+帳號: anonymous 密碼: 無
+
+bye or quit 離開
+?   list cmd
+? cmd  解釋cmd
+
+work/proj/openwrt/kernel/linux-2.6.32.11.as/drivers/usb/gadget/g_file_storage.ko
+已經複製到local 的 tftpboot了
+
+ftp> 
+cd lib/modules/2.6.32.11.as/ 
+put /tftpboot/g_file_storage.ko
+----------------------------------------------------------
+
+
+

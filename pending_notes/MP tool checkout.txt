@@ -1,0 +1,11 @@
+
+
+MP tool checkout to local folder
+http://tpesw1/svn/tpesw/trunk/tools/mp_dir
+
+python mptest.py
+
+v mptest.py
+
+
+

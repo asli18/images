@@ -1,0 +1,57 @@
+set hlsearch
+set backspace=2
+set autoindent
+set ruler
+set showmode
+"set rnu
+"set bg=dark
+set background=dark
+
+set cscopequickfix=s-,c-,d-,i-,t-,e-
+set tabstop=4
+set number
+set mouse=a
+set guifont=Courier\ New\ Bold\ 11
+set t_Co=256
+
+"run 'ctags -R *' command to create the tags file
+set tags=./tags,tags;$HOME
+
+"show tab and space
+set list
+"highlight tab and space
+set listchars=tab:^.,trail:$
+"setup tab and space
+set ts=4 sw=4 noet
+syntax enable
+syntax on
+colorscheme 256-jungle
+
+set pastetoggle=<f10>
+
+"highlight tab and space
+highlight SpecialKey ctermfg=199
+
+let Tlist_Show_One_File=1
+let Tlist_Exit_OnlyWindow=1
+let g:winManagerWindowLayout='FileExplorer'
+let g:miniBufExplMapWindowNavArrows = 1
+
+"map <f9> :cscope -kRbq<CR>
+" insert #if 0 - #endif around block of code
+map ;' mz'aO<Esc>i#if 0<Esc>'zo<Esc>i#endif<Esc> 
+map <f8> :cs add cscope.out .<CR>
+map <f7> :cn<CR>
+map <f6> :cp<CR>
+map <f5> :cs find s <C-R>=expand("<cword>")<CR><CR> :cw<CR>
+map <f4> :WMToggle<CR>
+map <f2> :Tlist<CR>
+map <f9> :!find . -iname \*.[chS] -o -iname \*.[ch]pp -o -iname \*.in -o -iname \*.in[lc] > cscope.files<CR> :!cscope -b -i cscope.files -f cscope.out<CR> :cs reset<CR>
+map <f12> :!find compat infra kernel hal/common hal/mips/{arch,mips32,montage} -name \*.[chS] -o -name \*.[ch]xx -o -name \*.in[lc] > cscope.files<CR> :!cscope -b -i cscope.files -f cscope.out<CR> :cs reset<CR>
+
+"Composing in normal mode
+nmap	<tab>	v>
+nmap	<s-tab>	v<
+"Composing in virtual mode
+vmap	<tab>	>gv
+vmap	<s-tab>	<gv

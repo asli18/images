@@ -1,0 +1,9 @@
+
+
+Bug Tracker 
+大小寫都可
+username: Aston Li
+password: aston
+
+Please login here:
+http://192.168.65.34/bug/index.php

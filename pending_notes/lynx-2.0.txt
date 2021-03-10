@@ -1,0 +1,75 @@
+
+ssh asli@tpesw1
+
+svn co http://tpesw1/svn/tpesw/trunk/lynx-2.0
+
+遠端連線
+ssh -X arco@192.168.65.204
+1234qwer
+cd Downloads
+Downloads$ sudo ./jp3 ftdi jtag://0.0.0.0:9999
+
+---------------------------------------------------
+Server tpesw1
+
+asli@tpesw1:~/work/proj/lynx-2.0$ cp /project/boforn/ecos/lynx-2.0_o/tr.sh ./
+asli@tpesw1:~/work/proj/lynx-2.0$ make rconf
+asli@tpesw1:~/work/proj/lynx-2.0$ make lconf
+asli@tpesw1:~/work/proj/lynx-2.0$ make clean_all
+asli@tpesw1:~/work/proj/lynx-2.0$ make rlib
+asli@tpesw1:~/work/proj/lynx-2.0$ make lib
+asli@tpesw1:~/work/proj/lynx-2.0$ make "projet_name"
+				example:
+asli@tpesw1:~/work/proj/lynx-2.0$ make iot_demo
+asli@tpesw1:~/work/proj/lynx-2.0$ ba-elf-gdb rlib/rlib
+(gdb) source gtr.sh
+(gdb) c
+
+================================================================================================================
+
+local
+"A0"
+sudo xc3sprog -c ftdi -v ~/work/bit_file/lynx_r3902_1507151741_A0.bit:w 
+"A1"
+sudo xc3sprog -c ftdi -v ~/work/bit_file/Lynx_A1_r4545_1601121152.bit:w
+sudo ./jp3 ftdi jtag://0.0.0.0:9999
+sudo ./jp3 ftdi jtag://0.0.0.0:9999 ### 0.0.0.0
+
+
+asli@tpesw1:~/work/proj/lynx-2.0$
+ba-elf-gdb rlib/rlib
+or
+ba-elf-gdb proj/flash_boot/flashb
+
+GDB> 
+	source gtr.sh
+	
+	target jtag jtag://192.168.65.97:9999
+	load
+	load proj/iot_demo/im_header
+	load proj/iot_demo/app2
+	set $pc=0x68008      (boot from rom)
+	c
+Under your console, type "go". 因為在 fpga 上的話 gdb 會已經把firmware load 到 heap head 的位置
+
+
+less gtr.sh 
+#!/bin/bash
+# start GDB for Lynx project
+target jtag jtag://192.168.65.97:9999
+load
+#load app/im_header
+#load app/app2
+set $pc=0x68008
+
+
+增加 ldev的參數
+http://tpesw1/tpesw/changeset/11837/ecos
+
+
+
+
+
+
+
+

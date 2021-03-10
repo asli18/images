@@ -1,0 +1,27 @@
+
+$sudo bash
+# vim /etc/sudoers
+在最後一行加上自己的使用者名稱, 之後用 sudo 就不用一直打密碼
+
+
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+
+# Members of the admin group may gain root privileges
+%admin ALL=(ALL) ALL
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+
+# See sudoers(5) for more information on "#include" directives:
+
+#includedir /etc/sudoers.d
+aston   ALL=NOPASSWD: ALL
+
+
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+
+
+在原本的 Kernal modules -> MMC/SD/SDIO card support 新增一個 option
+package/kernel/modules/mmc.mk
+
+這樣user space build 的時候就會去開 kernal 同名的 congfig，然後把 ko 檔搬到 file system
+
+
+define KernelPackage/mmc-host
+  SUBMENU:=$(MMC_MENU)
+  TITLE:=Cheetah SDHCI driver
+  KCONFIG:=CONFIG_CHEETAH_SDHCI
+  FILES:=$(LINUX_DIR)/arch/mips/cheetah/mmc/sdhci-mt.ko
+endef
+
+define KernelPackage/mmc-host/description
+ A library for xxx
+endef
+
+
+
+$(eval $(call KernelPackage,mmc-host))
+
+
+
+範例
+package/kernel/modules/block.mk
+
+define KernelPackage/loop
+  SUBMENU:=$(BLOCK_MENU)
+  TITLE:=Loopback device support
+  KCONFIG:= \
+        CONFIG_BLK_DEV_LOOP \
+        CONFIG_BLK_DEV_CRYPTOLOOP=n
+  FILES:=$(LINUX_DIR)/drivers/block/loop.ko
+  AUTOLOAD:=$(call AutoLoad,30,loop)
+endef
+
+define KernelPackage/loop/description
+ Kernel module for loopback device support
+endef
+
+$(eval $(call KernelPackage,loop))
+
+

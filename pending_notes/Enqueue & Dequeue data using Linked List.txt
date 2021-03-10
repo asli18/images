@@ -1,0 +1,108 @@
+鍊結串列建立 Queue
+Write a Program of Queue to (Enqueue & Dequeue) data using Linked List and Display Data?
+Q.Write a Program of Queue to (Enqueue & Dequeue) data using Linked List and Display Data?
+
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+
+ struct Node
+ {
+ int Data;
+ struct Node* next;
+ }*rear, *front;
+
+int main()
+{
+     int i=0;
+     rear=NULL;
+     printf(" \n1.  EnQueue Data");
+     printf(" \n2. DeQueue Data ");
+     printf(" \n3. Display Data of Queue");
+     printf(" \n4. Exit\n");
+     while(1)
+     {
+   printf(" \nChoose Option: ");
+   scanf("%d",&i);
+   switch(i)
+   {
+  case 1:
+  {
+       int value;
+       printf("\n Enter a value to push into Queue: ");
+       scanf("%d",&value);
+       push(value);
+       display();
+       break;
+  }
+  case 2:
+  {
+       delQueue();
+       display();
+       break;
+  }
+  case 3:
+  {
+       display();
+       break;
+  }
+  case 4:
+  {
+       exit(0);
+  }
+  default:
+  {
+       printf("\n Wrong choice!");
+  }
+   }
+     }
+}
+
+void delQueue()
+{
+       struct Node *temp, *var=front;
+      if(var==front)
+      {
+      front = front->next;
+      free(var);
+      }
+      else
+      printf("\nQueue Empty");
+}
+
+void push(int value)
+{
+     struct Node *temp;
+     temp=(struct Node *)malloc(sizeof(struct Node));
+     temp->Data=value;
+     if (rear == NULL)
+     {
+    rear=temp;
+    rear->next=NULL;
+    front=rear;
+     }
+     else
+     {
+    rear->next=temp;
+    rear=temp;
+    rear->next=NULL;
+     }
+}
+
+void display()
+{
+     struct Node *var=front;
+     if(var!=NULL)
+     {
+    printf("\nElements are:  ");
+    while(var!=NULL)
+    {
+  printf("\t%d",var->Data);
+  var=var->next;
+    }
+     printf("\n");
+     }
+     else
+     printf("\nQueue is Empty");
+}
+

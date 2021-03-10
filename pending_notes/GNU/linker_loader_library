@@ -1,0 +1,72 @@
+
+
+1.
+http://www.study-area.org/cyril/opentools/opentools/x909.html
+
+2.
+http://opass.logdown.com/posts/248172-linker-loader-library
+該文章hapackd筆記連結：
+https://embedded-note.hackpad.com/-linker-loader-library-cTe11h7V3KW
+
+[程序員的自我修養-linker, loader & library] 閱讀筆記（一）
+chapter 3: talk about object file
+
+
+Obj File的格式大概是長這樣的(當然，這省略的很多細節)
+
+File Header
+描述該文件的屬性，例如該文件是否可以執行、是靜態連結還是動態連結、target 硬體、target OS等
+Section Table: 紀錄了該份文件有哪些Section, 有哪些屬性
+.text section
+instruction通常都保存在這裡
+.data section
+通常用於紀錄初始化的global variable和local static variable
+.bss section
+通常用於紀錄未被初始化的global variable和static variable，通常只是紀錄符號和留一段空間
+
+
+
+系統保留的section名稱前面會有dot符號，你當然可以自己定義Section name放進去objfile中，透過
+
+__attribute__((section("FOO"))) int global = 42
+
+
+
+
+ELF文件結構
+
+大致上，ELF文件會有下列部份
+
+ELF Header
+	描述了ELF文件版本、target machine型號、程序入口地址等
+.text
+.data
+.bss
+...other section
+Section header table
+	描述了每個Seciton的名稱、長度、offset,、讀寫權限、其他屬性
+string tables
+symbol tables
+...
+ELF有32和64位元的版本。差別只是在於某些描述的成員型別大小不一樣。可以大概了解ELF header裡面到底描述了什麼(用readelf -h xxx.o)
+
+
+
+Link
+連結
+基本上，連結的關鍵在於「符號」，就像積木一樣把定義和使用結合在一起。連結很重要的關鍵在於符號的管理。每個obj file都會有一個相對硬的Symbol Table，這個表紀錄了Obj file中用到的所有符號。每個定義的符號都有一個對應值，稱為Symbol 
+Value，對於variable和functoin來說，Symbol Value指的就是他們的地址。除了variable和function之外，還有幾種不常用到的符號：
+
+符號類型
+
+global variable，可被其他obj file引用
+外部符號，你有使用，但是卻沒有定義在自己的obj file中
+段名，這個符號的值就是該section的start address
+局部符號，像是static variable, 這類的符號對linker來說意義不大，linker往往忽略他們。
+行號信息，這是optional
+
+我們可以使用nm指令來查看符號表 
+list symbols from object files
+nm xxx.o
+
+
